@@ -1,7 +1,6 @@
 package com.sgkcreations;
 
 
-
 import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -14,7 +13,30 @@ public class Main {
 
     public static void main(String[] args) {
 
-        int port=5545;
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                Point pp=new Point(0,0);
+//                while (true){
+//
+//                    Point p = MouseInfo.getPointerInfo().getLocation();
+//                    if(p.x!=pp.x && p.y!=pp.y)
+//                        System.out.println(p.x + ":" + p.y);
+//                    try {
+//                        Thread.sleep(10);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                    pp=new Point(p);
+//                }
+//            }
+//        }).run();
+
+       /* for (int i = 0; i < 100; i++) {
+            moveMouse(i,(i));
+        }*/
+
+        int port = 5545;
         try {
             DatagramSocket serverSocket = new DatagramSocket(port);
             byte[] receiveData = new byte[8];
@@ -25,28 +47,26 @@ public class Main {
             DatagramPacket receivePacket = new DatagramPacket(receiveData,
                     receiveData.length);
 
-            while(true)
-            {
+            while (true) {
 
 
                 serverSocket.receive(receivePacket);
 
 
-                byte[] recBytes=receivePacket.getData();
-                String string =new String(recBytes);
+                byte[] recBytes = receivePacket.getData();
+                String string = new String(recBytes);
                 try {
-                    String[] strings=string.split(":");
-                    int x,y;
-                    x=Integer.valueOf(strings[0]);
-                    y=Integer.valueOf(strings[1]);
-                    Point pointGot=new Point(x,y);
-                    System.out.println("Point got "+string);
-                    moveMouse(pointGot);
+                    String[] strings = string.split(":");
+                    int x, y;
+                    x = Integer.valueOf(strings[0]);
+                    y = Integer.valueOf(strings[1]);
+                  
+                    System.out.println("Point got " + string);
+                    moveMouse(x,y);
 
-                }catch (Exception e2){
+                } catch (Exception e2) {
 
                 }
-              
 
 
             }
@@ -56,23 +76,37 @@ public class Main {
     }
 
 
-
-    public static void moveMouse(Point point){
+    public static void moveMouse(int x,int y) {
         try {
-            // These coordinates are screen coordinates
-            Thread.sleep(10);
-            int xCoord = point.x;
-            int yCoord = point.y;
-            Point p= MouseInfo.getPointerInfo().getLocation();
-            // Move the cursor
-            System.out.println(p.x+":"+p.y);
             Robot robot = new Robot();
-            robot.mouseMove(p.x+xCoord,p.y+ yCoord);
+            Point p = MouseInfo.getPointerInfo().getLocation();
+            int xNew=p.x+x,yNew=p.y+y;
+
+            if(p.x<xNew&&p.y<yNew){
+                for (int xi = p.x, yi = p.y; (xi <= xNew) && (yi <= yNew); xi++, yi++) {
+                    robot.mouseMove(xi, yi);
+                }
+            } else
+            if(p.x>xNew&&p.y<yNew){
+                for (int xi = p.x, yi = p.y; (xi >= xNew) && (yi <= yNew); xi--, yi++) {
+                    robot.mouseMove(xi, yi);
+                }
+            } else
+            if(p.x<xNew&&p.y>yNew){
+                for (int xi = p.x, yi = p.y; (xi <= xNew) && (yi >= yNew); xi++, yi--) {
+                    robot.mouseMove(xi, yi);
+                }
+            } else
+            {
+                for (int xi = p.x, yi = p.y; (xi >= xNew) && (yi >= yNew); xi--, yi--) {
+                    robot.mouseMove(xi, yi);
+                }
+            }
+//                robot.mouseMove(p.x+xCoord,p.y+ yCoord);
         } catch (AWTException e) {
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
+
     public void run() {
 
         // should close serverSocket in finally block
