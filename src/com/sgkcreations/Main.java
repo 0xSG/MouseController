@@ -57,33 +57,12 @@ public class Main {
                 }
 
                 type(""+Character.toString((char)code).charAt(0));
-               /* try {
-                    String[] strings = string.split(":");
-                    int x, y;
-                    x = Integer.valueOf(strings[0]);
-                    y = Integer.valueOf(strings[1]);
 
-                    System.out.println("Point got " + string);
-                    moveMouse(x,y);
-
-                } catch (Exception e2) {
-
-                }*/
 
             }
         } catch (IOException e) {
-           // System.out.println(e);
+
         }
-    }
-    public static void type(int code)
-    {
-       /* char characterFromCode=Character.toString((char)code).charAt(0);
-        //int ASCIIcode=Integer.valueOf(string);
-        code= Byte.valueOf(characterFromCode+"");*/
-        System.out.print(code);
-        robot.delay(40);
-        robot.keyPress(code);
-        robot.keyRelease(code);
     }
     private static void type(String s)
     {
@@ -91,7 +70,6 @@ public class Main {
         for (byte b : bytes)
         {
             int code = b;
-            // keycode only handles [A-Z] (which is ASCII decimal [65-90])
             if (code > 96 && code < 123) code = code - 32;
             robot.delay(40);
             robot.keyPress(code);
